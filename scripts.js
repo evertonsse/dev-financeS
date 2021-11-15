@@ -77,6 +77,9 @@ const DOM = {
         tr.innerHTML = DOM.innerHtmlTransaction(transaction)
         DOM.transactionsContainer.appendChild(tr)
     },
+    cardtotal: document.querySelector(".card.total")
+
+    ,
 
     innerHtmlTransaction(transaction, index) {
         const CSScalass = transaction.amount > 0 ? 'income' : 'expense'
@@ -103,11 +106,18 @@ const DOM = {
     },
     clearTransactions() {
         DOM.transactionsContainer.innerHTML = " ";
-    }, 
-    transactionType(){ 
+    },
+    transactionType() {
         const transactionType = document.getElementById("type")
 
         return transactionType.options[transactionType.selectedIndex].value;
+    }, changeCardTotal() {
+
+       if (Transaction.total() === 0 || Transaction.total() >0) {
+        DOM.cardtotal.classList.remove("owing")
+       } else {
+           DOM.cardtotal.classList.add("owing")
+       }
     }
 }
 
@@ -121,14 +131,14 @@ const Utils = {
             style: "currency",
             currency: "BRL"
         })
-        
+
         return signal + value
     },
 
     formatAmount(value) {
 
         if (DOM.transactionType() === "expense") {
-            value = -value 
+            value = -value
         }
         value = Number(value) * 100
 
@@ -214,6 +224,7 @@ const App = {
     init() {
         Transaction.all.forEach((transaction, index) => {
             DOM.addTransaction(transaction, index)
+            DOM.changeCardTotal()
 
         })
         DOM.updataBalance()
@@ -222,6 +233,7 @@ const App = {
 
     reload() {
         DOM.clearTransactions()
+        DOM.changeCardTotal()
         App.init()
     }
 }
